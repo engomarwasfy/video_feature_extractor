@@ -24,11 +24,10 @@ def accimage_loader(path):
 
 def get_default_image_loader():
     from torchvision import get_image_backend
-    if get_image_backend() == 'accimage':
-        import accimage
-        return accimage_loader
-    else:
+    if get_image_backend() != 'accimage':
         return pil_loader
+    import accimage
+    return accimage_loader
 
 
 def video_loader(video_dir_path, frame_indices, image_loader):
@@ -54,12 +53,7 @@ def load_annotation_data(data_file_path):
 
 
 def get_class_labels(data):
-    class_labels_map = {}
-    index = 0
-    for class_label in data['labels']:
-        class_labels_map[class_label] = index
-        index += 1
-    return class_labels_map
+    return {class_label: index for index, class_label in enumerate(data['labels'])}
 
 
 def get_video_names_and_annotations(data, subset):

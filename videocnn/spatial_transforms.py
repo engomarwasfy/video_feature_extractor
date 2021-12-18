@@ -131,20 +131,18 @@ class Scale(object):
         Returns:
             PIL.Image: Rescaled image.
         """
-        if isinstance(self.size, int):
-            w, h = img.size
-            if (w <= h and w == self.size) or (h <= w and h == self.size):
-                return img
-            if w < h:
-                ow = self.size
-                oh = int(self.size * h / w)
-                return img.resize((ow, oh), self.interpolation)
-            else:
-                oh = self.size
-                ow = int(self.size * w / h)
-                return img.resize((ow, oh), self.interpolation)
-        else:
+        if not isinstance(self.size, int):
             return img.resize(self.size, self.interpolation)
+        w, h = img.size
+        if (w <= h and w == self.size) or (h <= w and h == self.size):
+            return img
+        if w < h:
+            ow = self.size
+            oh = int(self.size * h / w)
+        else:
+            oh = self.size
+            ow = int(self.size * w / h)
+        return img.resize((ow, oh), self.interpolation)
 
 
 class CenterCrop(object):
@@ -156,10 +154,9 @@ class CenterCrop(object):
     """
 
     def __init__(self, size):
-        if isinstance(size, numbers.Number):
-            self.size = (int(size), int(size))
-        else:
-            self.size = size
+        self.size = (
+            (int(size), int(size)) if isinstance(size, numbers.Number) else size
+        )
 
     def __call__(self, img):
         """

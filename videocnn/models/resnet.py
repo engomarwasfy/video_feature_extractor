@@ -141,10 +141,9 @@ class ResNet(nn.Module):
                     nn.BatchNorm3d(planes * block.expansion)
                 )
 
-        layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample))
+        layers = [block(self.inplanes, planes, stride, downsample)]
         self.inplanes = planes * block.expansion
-        for i in range(1, blocks):
+        for _ in range(1, blocks):
             layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
@@ -173,9 +172,10 @@ def get_fine_tuning_parameters(model, ft_begin_index):
     if ft_begin_index == 0:
         return model.parameters()
 
-    ft_module_names = []
-    for i in range(ft_begin_index, 5):
-        ft_module_names.append('layer{}'.format(ft_begin_index))
+    ft_module_names = [
+        'layer{}'.format(ft_begin_index) for _ in range(ft_begin_index, 5)
+    ]
+
     ft_module_names.append('fc')
 
     parameters = []
@@ -193,41 +193,34 @@ def get_fine_tuning_parameters(model, ft_begin_index):
 def resnet10(**kwargs):
     """Constructs a ResNet-18 model.
     """
-    model = ResNet(BasicBlock, [1, 1, 1, 1], **kwargs)
-    return model
+    return ResNet(BasicBlock, [1, 1, 1, 1], **kwargs)
 
 def resnet18(**kwargs):
     """Constructs a ResNet-18 model.
     """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
-    return model
+    return ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
 
 def resnet34(**kwargs):
     """Constructs a ResNet-34 model.
     """
-    model = ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
-    return model
+    return ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
 
 def resnet50(**kwargs):
     """Constructs a ResNet-50 model.
     """
-    model = ResNet(Bottleneck, [3, 4, 6, 3], **kwargs)
-    return model
+    return ResNet(Bottleneck, [3, 4, 6, 3], **kwargs)
 
 def resnet101(**kwargs):
     """Constructs a ResNet-101 model.
     """
-    model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
-    return model
+    return ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
 
 def resnet152(**kwargs):
     """Constructs a ResNet-101 model.
     """
-    model = ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
-    return model
+    return ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
 
 def resnet200(**kwargs):
     """Constructs a ResNet-101 model.
     """
-    model = ResNet(Bottleneck, [3, 24, 36, 3], **kwargs)
-    return model
+    return ResNet(Bottleneck, [3, 24, 36, 3], **kwargs)

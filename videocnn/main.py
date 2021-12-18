@@ -38,10 +38,7 @@ if __name__=="__main__":
         for row in f:
             class_names.append(row[:-1])
 
-    ffmpeg_loglevel = 'quiet'
-    if opt.verbose:
-        ffmpeg_loglevel = 'info'
-
+    ffmpeg_loglevel = 'info' if opt.verbose else 'quiet'
     if os.path.exists('tmp'):
         subprocess.call('rm -rf tmp', shell=True)
 

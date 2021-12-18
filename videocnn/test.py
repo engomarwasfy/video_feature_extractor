@@ -13,9 +13,10 @@ def calculate_video_results(output_buffer, video_id, test_results, class_names):
     average_scores = torch.mean(video_outputs, dim=0)
     sorted_scores, locs = torch.topk(average_scores, k=10)
 
-    video_results = []
-    for i in range(sorted_scores.size(0)):
-        video_results.append({'label': class_names[locs[i]], 'score': sorted_scores[i]})
+    video_results = [
+        {'label': class_names[locs[i]], 'score': sorted_scores[i]}
+        for i in range(sorted_scores.size(0))
+    ]
 
     test_results['results'][video_id] = video_results
 
@@ -39,7 +40,7 @@ def test(data_loader, model, opt, class_names):
         outputs = model(inputs)
 
         for j in range(outputs.size(0)):
-            if not (i == 0 and j == 0) and targets[j] != previous_video_id:
+            if (i != 0 or j != 0) and targets[j] != previous_video_id:
                 calculate_video_results(output_buffer, previous_video_id,
                                         test_results, class_names)
                 output_buffer = []

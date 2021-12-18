@@ -19,6 +19,4 @@ def parse_opts():
     parser.add_argument('--verbose', action='store_true', help='')
     parser.set_defaults(verbose=False)
 
-    args = parser.parse_args()
-
-    return args
+    return parser.parse_args()

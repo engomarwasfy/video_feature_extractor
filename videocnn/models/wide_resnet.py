@@ -109,10 +109,9 @@ class WideResNet(nn.Module):
                     nn.BatchNorm3d(planes * block.expansion)
                 )
 
-        layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample))
+        layers = [block(self.inplanes, planes, stride, downsample)]
         self.inplanes = planes * block.expansion
-        for i in range(1, blocks):
+        for _ in range(1, blocks):
             layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
@@ -140,9 +139,10 @@ def get_fine_tuning_parameters(model, ft_begin_index):
     if ft_begin_index == 0:
         return model.parameters()
 
-    ft_module_names = []
-    for i in range(ft_begin_index, 5):
-        ft_module_names.append('layer{}'.format(ft_begin_index))
+    ft_module_names = [
+        'layer{}'.format(ft_begin_index) for _ in range(ft_begin_index, 5)
+    ]
+
     ft_module_names.append('fc')
 
     parameters = []
@@ -159,5 +159,4 @@ def get_fine_tuning_parameters(model, ft_begin_index):
 def resnet50(**kwargs):
     """Constructs a ResNet-50 model.
     """
-    model = WideResNet(WideBottleneck, [3, 4, 6, 3], **kwargs)
-    return model
+    return WideResNet(WideBottleneck, [3, 4, 6, 3], **kwargs)

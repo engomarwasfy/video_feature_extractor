@@ -14,14 +14,13 @@ def get_fps(video_file_path, frames_directory_path):
 
     duration_index = res.find('Duration:')
     duration_str = res[(duration_index + 10):(duration_index + 21)]
-    hour = float(duration_str[0:2])
+    hour = float(duration_str[:2])
     minute = float(duration_str[3:5])
     sec = float(duration_str[6:10])
     total_sec = hour * 3600 + minute * 60 + sec
 
     n_frames = len(os.listdir(frames_directory_path))
-    fps = round(n_frames / total_sec, 2)
-    return fps
+    return round(n_frames / total_sec, 2)
 
 
 if __name__ == '__main__':
@@ -37,10 +36,7 @@ if __name__ == '__main__':
         results = json.load(f)
 
     with open(class_name_path, 'r') as f:
-        class_names = []
-        for row in f:
-            class_names.append(row[:-1])
-
+        class_names = [row[:-1] for row in f]
     for index in range(len(results)):
         video_path = os.path.join(video_root_path, results[index]['video'])
         print(video_path)
@@ -48,14 +44,11 @@ if __name__ == '__main__':
         clips = results[index]['clips']
         unit_classes = []
         unit_segments = []
-        if temporal_unit == 0:
-            unit = len(clips)
-        else:
-            unit = temporal_unit
+        unit = len(clips) if temporal_unit == 0 else temporal_unit
         for i in range(0, len(clips), unit):
             n_elements = min(unit, len(clips) - i)
             scores = np.array(clips[i]['scores'])
-            for j in range(i, min(i + unit, len(clips))):
+            for _ in range(i, min(i + unit, len(clips))):
                 scores += np.array(clips[i]['scores'])
             scores /= n_elements
             unit_classes.append(class_names[np.argmax(scores)])

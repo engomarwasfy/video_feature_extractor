@@ -23,9 +23,8 @@ class Preprocessing(object):
         n = size - len(tensor) % size
         if n == size:
             return tensor
-        else:
-            z = th.zeros(n, tensor.shape[1], tensor.shape[2], tensor.shape[3])
-            return th.cat((tensor, z), 0)
+        z = th.zeros(n, tensor.shape[1], tensor.shape[2], tensor.shape[3])
+        return th.cat((tensor, z), 0)
 
     def __call__(self, tensor):
         if self.type == '2d':
